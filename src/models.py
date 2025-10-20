@@ -15,6 +15,9 @@ class User(db.Model):
     posts: Mapped[List["Post"]] = relationship(back_populates="author_id")
     posts: Mapped[List["Comment"]] = relationship(back_populates="author")
 
+    follower: Mapped[List["Follower"]] = relationship(back_populates="user_from")
+    following: Mapped[List["Follower"]] = relationship(back_populates="user_to")
+
 
     def serialize(self):
         return {
@@ -56,3 +59,12 @@ class Media(db.Model):
     
     post_user: Mapped["Post"] = relationship(back_populates="post_id")
 
+
+class Follower(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    user_from_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    user_to_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+
+    user_from: Mapped["User"] = relationship(back_populates="follower")
+    user_to: Mapped["User"] = relationship(back_populates="following")
